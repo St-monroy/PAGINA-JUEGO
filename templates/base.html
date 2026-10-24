@@ -37,7 +37,7 @@
     {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}<div class="flash-stack">{% for category,message in messages %}<div class="flash {{ category }}">{{ message }}<button type="button" class="flash-close" aria-label="Cerrar">×</button></div>{% endfor %}</div>{% endif %}{% endwith %}
     {% block content %}{% endblock %}
   </main>
-  <footer class="footer"><span>SSRCM <span class="accent">■</span> Pequeños píxeles. Grandes mundos.</span><span>Catálogo de demostración · {{ year }}</span><a class="footer-link" href="https://hoo.be/ssrcmstudio_proyects" target="_blank" rel="noopener noreferrer">Ver proyectos de SSRCM ↗</a></footer>
+  <footer class="footer"><span>SSRCM <span class="accent">■</span> Pequeños píxeles. Grandes mundos.</span><span>Catálogo de demostración · {{ year }}</span><a class="footer-link" href="https://hoo.be/ssrcmstudio_projects" target="_blank" rel="noopener noreferrer">Ver proyectos de SSRCM ↗</a></footer>
 </div>
 <nav class="mobile-nav"><a href="{{ url_for('index') }}">⌕<small>Explorar</small></a><a href="{{ url_for('index',view='Top juegos') }}">♛<small>Top</small></a><a href="{{ url_for('index',view='Favoritos') }}">♡<small>Favoritos</small></a><a href="{{ url_for('profile') if current_user else url_for('auth') }}">♙<small>Perfil</small></a></nav>
 <section class="pixel-chat" id="pixel-chat" aria-label="Asistente de SSRCM">
