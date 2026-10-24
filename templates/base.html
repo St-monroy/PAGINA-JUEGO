@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#090b13"><title>{% block title %}SSRCM — Pequeños píxeles, grandes aventuras{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+  <script defer src="{{ url_for('static', filename='js/funciones.js') }}"></script>
+</head>
+<body>
+<div class="scanlines" aria-hidden="true"></div>
+<aside class="sidebar">
+  <a class="brand" href="{{ url_for('index') }}"><span class="brand-mark">▣</span><span>SSR<span class="accent">CM</span><small>PIXEL GAME HUB</small></span></a>
+  <p class="nav-caption">EXPLORAR</p>
+  <nav class="side-nav">
+    <a class="{{ 'active' if view|default('') == 'Descubrir' else '' }}" href="{{ url_for('index',view='Descubrir') }}">⌕ <span>Descubrir</span></a>
+    <a class="{{ 'active' if view|default('') == 'Top juegos' else '' }}" href="{{ url_for('index',view='Top juegos') }}">♛ <span>Top juegos</span></a>
+    <a class="{{ 'active' if view|default('') == 'Novedades' else '' }}" href="{{ url_for('index',view='Novedades') }}">✦ <span>Novedades</span></a>
+  </nav>
+  <p class="nav-caption">TU ESPACIO</p>
+  <nav class="side-nav">
+    <a href="{{ url_for('index',view='Mi biblioteca') }}">▤ <span>Mi biblioteca</span></a>
+    <a href="{{ url_for('index',view='Favoritos') }}">♡ <span>Favoritos</span></a>
+    <a href="{{ url_for('profile') if current_user else url_for('auth') }}">♙ <span>Mi perfil</span></a>
+    <a href="{{ url_for('players') }}">♧ <span>Jugadores</span></a>
+    {% if current_user and current_user.role == 'admin' %}<a href="{{ url_for('admin') }}">⚙ <span>Administración</span></a>{% endif %}
+  </nav>
+  <div class="sidebar-bottom"><div class="pixel-rule"></div><b>HECHO PARA LOS QUE JUEGAN.</b><p>Con amor por el pixel art.</p><span class="tiny">© {{ year }} SSRCM</span></div>
+</aside>
+<div class="main-area">
+  <header class="topbar">
+    <form class="search-box" action="{{ url_for('index') }}" method="get"><span>⌕</span><input name="q" value="{{ q|default('') }}" placeholder="Buscar juegos, géneros o creadores…" aria-label="Buscar juegos"><button aria-label="Buscar">Buscar</button></form>
+    <div class="top-actions"><a class="icon-btn" href="{{ url_for('players') }}" title="Comunidad">♧</a>
+    {% if current_user %}<a class="account-btn" href="{{ url_for('profile') }}"><span class="avatar-mini">{{ current_user.avatar }}</span>{{ current_user.username }}</a><form action="{{ url_for('logout') }}" method="post"><button class="btn btn-quiet" type="submit">Salir</button></form>
+    {% else %}<a class="btn btn-primary" href="{{ url_for('auth') }}">♙ Entrar</a>{% endif %}</div>
+  </header>
+  <main class="content">
+    {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}<div class="flash-stack">{% for category,message in messages %}<div class="flash {{ category }}">{{ message }}<button type="button" class="flash-close" aria-label="Cerrar">×</button></div>{% endfor %}</div>{% endif %}{% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="footer"><span>SSRCM <span class="accent">■</span> Pequeños píxeles. Grandes mundos.</span><span>Catálogo de demostración · {{ year }}</span><a class="footer-link" href="https://hoo.be/ssrcmstudio_proyects" target="_blank" rel="noopener noreferrer">Ver proyectos de SSRCM ↗</a></footer>
+</div>
+<nav class="mobile-nav"><a href="{{ url_for('index') }}">⌕<small>Explorar</small></a><a href="{{ url_for('index',view='Top juegos') }}">♛<small>Top</small></a><a href="{{ url_for('index',view='Favoritos') }}">♡<small>Favoritos</small></a><a href="{{ url_for('profile') if current_user else url_for('auth') }}">♙<small>Perfil</small></a></nav>
+<section class="pixel-chat" id="pixel-chat" aria-label="Asistente de SSRCM">
+  <button class="pixel-chat-toggle" id="pixel-chat-toggle" type="button" aria-expanded="false" aria-controls="pixel-chat-panel"><span class="pixel-chat-avatar">✦</span><span>Habla con Pixel</span><span class="pixel-chat-status"></span></button>
+  <div class="pixel-chat-panel" id="pixel-chat-panel" hidden>
+    <div class="pixel-chat-header"><div class="pixel-chat-avatar">✦</div><div><strong>Pixel</strong><small>ASISTENTE DE SSRCM</small></div><button type="button" id="pixel-chat-close" aria-label="Cerrar asistente">×</button></div>
+    <div class="pixel-chat-messages" id="pixel-chat-messages" aria-live="polite"><div class="pixel-message bot-message">¡Hola, jugador! 👾 Puedo recomendarte juegos, hacerte preguntas de química de Chemistry o contarte sobre el terror psicológico de The Curse of Forest. ¿Qué te gustaría saber?</div></div>
+    <div class="pixel-chat-suggestions"><button type="button" data-pixel-prompt="¿Qué juego me recomiendas?">Recomiéndame un juego</button><button type="button" data-pixel-prompt="Cuéntame de AETERNUM - BLADES">Sobre Blades</button><button type="button" data-pixel-prompt="Hazme una pregunta de Chemistry">Pregunta de química</button><button type="button" data-pixel-prompt="¿De qué trata The Curse of Forest?">Sobre Curse of Forest</button></div>
+    <form class="pixel-chat-form" id="pixel-chat-form"><input id="pixel-chat-input" maxlength="500" placeholder="Escribe tu pregunta..." aria-label="Escribe tu pregunta" autocomplete="off" required><button type="submit" aria-label="Enviar mensaje">➤</button></form>
+    <p class="pixel-chat-note">Asistente de orientación sobre el catálogo SSRCM.</p>
+  </div>
+</section>
+</body></html>

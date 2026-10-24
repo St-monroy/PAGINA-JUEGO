@@ -1,0 +1,132 @@
+{% extends "base.html" %}{% block title %}{{ game.name }} — SSRCM{% endblock %}
+{% block content %}
+<a class="back-link" href="{{ url_for('index') }}">← Volver al catálogo</a>
+<section class="game-detail">
+  <div class="detail-art">
+    <img
+      src="{{ url_for('static',filename='img/'+game.image) }}"
+      alt="{{ game.name }}"
+    /><span class="pixel-corner">SSRCM / GAME FILE</span>
+  </div>
+  <div class="detail-copy">
+    <p class="eyebrow">{{ game.category|upper }} · {{ game.studio|upper }}</p>
+    <h1>{{ game.name }}</h1>
+    <p class="detail-description">{{ game.description }}</p>
+    <div class="detail-stats">
+      <div>
+        <strong>★ {{ "%.1f"|format(avg if avg else game.rating) }}</strong
+        ><span>VALORACIÓN</span>
+      </div>
+      <div><strong>{{ review_count }}</strong><span>RESEÑAS</span></div>
+      <div><strong>{{ game.size }}</strong><span>TAMAÑO</span></div>
+    </div>
+    <div class="detail-actions">
+      <form
+        action="{{ url_for('toggle_favorite',game_id=game.id) }}"
+        method="post"
+      >
+        <button class="btn btn-primary" type="submit">
+          {{ '✓ En tu biblioteca' if is_favorite else '♡ Guardar juego' }}
+        </button>
+      </form>
+      {% if game.itch_url %}
+      <a
+        class="btn btn-outline"
+        href="{{ game.itch_url }}"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Descargar {{ game.name }} en Itch.io"
+      >
+        ↓ Descargar
+      </a>
+      {% endif %}
+      <span class="pill">DISPONIBLE · DEMO</span>
+    </div>
+    <p class="note">
+      Este juego es parte del catálogo de muestra. No hay instalador ni compra
+      real disponible.
+    </p>
+  </div>
+</section>
+{% if game.screenshots %}
+<section class="game-screenshots">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">DENTRO DEL JUEGO</p>
+      <h2>Imágenes de {{ game.name }}</h2>
+      <p class="muted">Mira algunas escenas y pantallas de esta aventura.</p>
+    </div>
+  </div>
+  <div class="screenshot-grid">
+    {% for shot in game.screenshots %}
+    <figure>
+      <img
+        src="{{ url_for('static',filename='img/'+shot) }}"
+        alt="Captura de {{ game.name }}"
+        loading="lazy"
+      />
+      <figcaption>{{ game.name }}</figcaption>
+    </figure>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+<section class="reviews" id="reviews">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">VOCES DE LA COMUNIDAD</p>
+      <h2>Reseñas de jugadores</h2>
+    </div>
+  </div>
+  {% if current_user %}
+  <form
+    class="review-form panel"
+    action="{{ url_for('add_review',game_id=game.id) }}"
+    method="post"
+  >
+    <h3>Comparte tu opinión</h3>
+    <label
+      >Tu valoración<select name="rating">
+        {% for n in range(5,0,-1) %}
+        <option value="{{ n }}">{{ n }} ★</option>
+        {% endfor %}
+      </select></label
+    ><label
+      >Reseña<textarea
+        name="body"
+        required
+        minlength="3"
+        maxlength="800"Explorar juego
+        placeholder="¿Qué te pareció este juego?"
+      ></textarea></label
+    ><button class="btn btn-primary">Publicar reseña</button>
+  </form>
+  {% else %}
+  <div class="panel inline-cta">
+    <p>Inicia sesión para valorar y comentar este juego.</p>
+    <a class="btn btn-primary" href="{{ url_for('auth') }}">Entrar</a>
+  </div>
+  {% endif %}
+  <div class="review-list">
+    {% for review in reviews %}
+    <article class="review-card">
+      <div class="review-head">
+        <span class="avatar">{{ review.avatar }}</span>
+        <div>
+          <strong>{{ review.username }}</strong
+          ><small>{{ review.created_at }}</small>
+        </div>
+        <span class="review-stars"
+          >{{ '★' * review.rating }}{{ '☆' * (5-review.rating) }}</span
+        >
+      </div>
+      <p>{{ review.body }}</p>
+    </article>
+    {% else %}
+    <div class="empty-state compact">
+      <p>Aún no hay reseñas. ¡Sé el primero en compartir tu opinión!</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
